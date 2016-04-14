@@ -2,3 +2,7 @@
 *.csv
 *.xlsx
 *.png
+
+# ignore Rhistory
+*.Rhistory
+.Rhistory
