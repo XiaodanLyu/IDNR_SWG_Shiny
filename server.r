@@ -94,8 +94,10 @@ shinyServer(
     })
     
     output$downloadPlot <- downloadHandler(
-      filename <- function() paste0(paste(input$kind, input$specie, input$cat, input$prob, input$public, sep = "_"), ".tiff"),
-      content <- function(file) ggsave(file, plotInput(), width = 6, height = 4, device = "tiff")
+      filename <- function() 
+        paste0(paste(input$kind, input$specie, input$cat, input$prob, input$public, sep = "_"), ".", input$maptype),
+      content <- function(file) 
+        ggsave(file, plotInput(), width = 6, height = 4, device = input$maptype)
     )
     
     range <- reactiveValues(x = NULL, y = NULL)
