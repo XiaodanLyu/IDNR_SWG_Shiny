@@ -27,15 +27,15 @@ shinyServer(
       updateSelectInput(session, "region", choices = Achoices())
     })
     
-#    area <- reactiveValues(name = NULL)
+    #    area <- reactiveValues(name = NULL)
     
-#    observe({
-#      area$name <- levels(pp$Name)[grep(input$public, levels(pp$Name), ignore.case = T)]
-#    })
+    #    observe({
+    #      area$name <- levels(pp$Name)[grep(input$public, levels(pp$Name), ignore.case = T)]
+    #    })
     
-#    output$area_choice <- renderPrint({
-#      cat(area$name, sep = "; ")
-#    })
+    #    output$area_choice <- renderPrint({
+    #      cat(area$name, sep = "; ")
+    #    })
     
     data <- reactive({
       if (input$specie == "All") s <- choice()$Abbr
@@ -103,19 +103,28 @@ shinyServer(
     range <- reactiveValues(x = NULL, y = NULL)
     
     observeEvent(input$go, {
+#      if (is.null(input$public)) {
+#        range$x <- NULL
+#        range$y <- NULL
+#      }
+      sp <- NULL
       if ("Public" %in% input$Boundary & !is.null(input$public)){
         sp <- pp %>% filter(Name %in% input$public) %>% select(x, y)
-        sr <- list(x = diff(range(sp$x)), y = diff(range(sp$y)),
-                   x0 = mean(range(sp$x)), y0 = mean(range(sp$y)))
-        if(sr$x/sr$y>3/2) {
-          range$x <- range(sp$x)
-          range$y <- sr$y0+1/3*sr$x*c(-1, 1)
-        }
-        else {
-          range$x <- sr$x0+3/4*sr$y*c(-1, 1)
-          range$y <- range(sp$y)
-        }
       }
+      if ("County" %in% input$Boundary & !is.null(input$county)){
+        sp <- est %>% filter(COUNTY %in% input$county) %>% select(x, y)
+      }
+      sr <- list(x = diff(range(sp$x)), y = diff(range(sp$y)),
+                 x0 = mean(range(sp$x)), y0 = mean(range(sp$y)))
+      if(sr$x/sr$y>3/2) {
+        range$x <- range(sp$x)
+        range$y <- sr$y0+1/3*sr$x*c(-1, 1)
+      }
+      else {
+        range$x <- sr$x0+3/4*sr$y*c(-1, 1)
+        range$y <- range(sp$y)
+      }
+      
     })
     
     observeEvent(input$plot_dblclick,{
@@ -150,7 +159,7 @@ shinyServer(
     })
     
     output$hover_info <- renderPrint({
-#      cat("Nearest three points\n")
+      #      cat("Nearest three points\n")
       cat("Probability: ")
       cat(round(nearPoints(data(), input$plot_hover, maxpoints = 3)$value, 3))
       cat("\n")
