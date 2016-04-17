@@ -1,4 +1,3 @@
-## shiny links input and output
 shinyServer(
   function(input, output, session) {
     
@@ -27,30 +26,14 @@ shinyServer(
       updateSelectInput(session, "region", choices = Achoices())
     })
     
-    #    area <- reactiveValues(name = NULL)
-    
-    #    observe({
-    #      area$name <- levels(pp$Name)[grep(input$public, levels(pp$Name), ignore.case = T)]
-    #    })
-    
-    #    output$area_choice <- renderPrint({
-    #      cat(area$name, sep = "; ")
-    #    })
-    
     data <- reactive({
       if (input$specie == "All") s <- choice()$Abbr
       if (input$specie != "All") s <- choice() %>% filter(Specie %in% input$specie) %>% select(Abbr)
       data <- est %>% select(one_of(paste0(s, input$prob)))
       if (input$specie == "All"){
-        if (T){
           weight <- choice()[, input$prob]
           w <- matrix(rep(prop.table(weight), each = nrow(data)), nr = nrow(data))
           data <-  rowSums(data * w, na.rm = T)
-        }
-        else
-        {
-          data <- rowMeans(data, na.rm = T)
-        }
       }
       data <- est %>% select(x, y, LAND, COUNTY, WMU) %>% bind_cols(data.frame(data)) 
       names(data) <- c("x", "y", "LAND", "COUNTY", "WMU", "value")
@@ -103,10 +86,6 @@ shinyServer(
     range <- reactiveValues(x = NULL, y = NULL)
     
     observeEvent(input$go, {
-#      if (is.null(input$public)) {
-#        range$x <- NULL
-#        range$y <- NULL
-#      }
       sp <- NULL
       if ("Public" %in% input$Boundary & !is.null(input$public)){
         sp <- pp %>% filter(Name %in% input$public) %>% select(x, y)
@@ -124,7 +103,6 @@ shinyServer(
         range$x <- sr$x0+3/4*sr$y*c(-1, 1)
         range$y <- range(sp$y)
       }
-      
     })
     
     observeEvent(input$plot_dblclick,{
@@ -159,7 +137,6 @@ shinyServer(
     })
     
     output$hover_info <- renderPrint({
-      #      cat("Nearest three points\n")
       cat("Probability: ")
       cat(round(nearPoints(data(), input$plot_hover, maxpoints = 3)$value, 3))
       cat("\n")

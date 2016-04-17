@@ -31,15 +31,10 @@ shinyUI(
                                selected = "Psi"),
                    selectInput("specie", "Select Specie:", 
                                choices = NULL),
-                   #                   conditionalPanel(condition = "input.specie == 'All'",
-                   #                                    checkboxInput("weight", "Weighted Average", value = TRUE)),
-                   #                   hr(),
                    checkboxGroupInput("Boundary", "Boundary to show",
                                       choices = c(`Landform Region` = "Land", "County",
                                                   `Wildlife Management Units` = "WMU", `Public Lands` = "Public"),
                                       select = "Land"),
-                   #                   textInput("Lands", "Public land name contains (e.g., Adair WMA)"),
-                   #                   hr(),
                    selectInput("public", "Public land name contains (e.g., Adair WMA)",
                                levels(pp$Name), multiple = TRUE, selectize = TRUE),
                    selectInput("county", "County name contains (e.g., Story)",
@@ -51,9 +46,6 @@ shinyUI(
                    hr(),
                    radioButtons("maptype", "Map type:", c("tiff", "png", "jpeg", "pdf")),
                    downloadButton('downloadPlot', 'Download Map', class = "btn btn-success")
-                   #                   checkboxGroupInput("region", "Regions in Iowa to show",
-                   #                                      levels(est[, 1])),
-                   #                   checkboxInput("bar", "All/None", value = TRUE)
                  )
                  ),
                  column(width = 9,
@@ -93,10 +85,6 @@ shinyUI(
                           column(width = 5,
                                  tags$b("Hover Point Information:"),
                                  verbatimTextOutput("hover_info"))
-                          #                          column(width = 4,
-                          #                                 tags$b("Public area chosen:"),
-                          #                                 wellPanel(textOutput("area_choice")))
-                          
                         )
                  )
                )
