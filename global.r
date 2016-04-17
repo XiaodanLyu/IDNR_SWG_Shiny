@@ -1,4 +1,4 @@
-# require package shiny, DT, readxl, reshape2 and ggplot2 
+## require package shiny, readxl, DT, ggplot2 and dplyr 
 if (!require("shiny")) install.packages("shiny")
 if (!require("readxl")) install.packages("readxl")
 if (!require("devtools")) install.packages("devtools")
@@ -16,8 +16,9 @@ index <<- read.csv("./data/Index.csv", header = T, as.is = T)
 
 # Model Coefficient estimates
 model <- readxl::read_excel("./data/Models.xlsx", sheet = "ModelEst")
-model <<- transform(model, o.s = (o.lcl*o.ucl > 0), g.s = (g.lcl*g.ucl) > 0,
-                    e.s = (e.lcl*e.ucl > 0), p.s = (p.lcl*p.ucl > 0))
+# get model coefficients significance indicator
+model <<- model %>% mutate(o.s = (o.lcl*o.ucl > 0), g.s = (g.lcl*g.ucl) > 0,
+                           e.s = (e.lcl*e.ucl > 0), p.s = (p.lcl*p.ucl > 0))
 # Model Real Parameter estimates
 para <<- readxl::read_excel("./data/Models.xlsx", sheet = "Real_Parameter")
 
@@ -25,7 +26,7 @@ para <<- readxl::read_excel("./data/Models.xlsx", sheet = "Real_Parameter")
 height <<- 415
 width <<- 600
 
-# Map components
+# Coordinates, Landform Regions, County, Wildlife Management Units and Predicted values 
 est <<- read.csv("./data/Predicted_values.csv", header = T)
-#Achoices <<- levels(est$LAND)
+# Public Lands vertices
 pp <<- read.csv("./data/Public_Lands.csv")
