@@ -2,7 +2,10 @@
 *.csv
 *.xlsx
 *.png
+*.txt
 
 # ignore Rhistory
 *.Rhistory
-.Rhistory
+
+# ignore markdown html
+*.html

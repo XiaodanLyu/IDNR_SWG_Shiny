@@ -1,4 +1,4 @@
-shinyServer(
+ shinyServer(
   function(input, output, session) {
     
     choice <- reactive({

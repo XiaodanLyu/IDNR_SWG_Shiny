@@ -73,7 +73,6 @@ shinyUI(
                         fluidRow(
                           column(width = 6,
                                  conditionalPanel(condition = "input.specie != 'All'",
-                                                  #strong("Best Model Covariates:"),
                                                   strong(textOutput("model_info")))
                           )
                         ),
