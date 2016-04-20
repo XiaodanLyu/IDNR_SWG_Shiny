@@ -1,4 +1,7 @@
- shinyServer(
+# -------------------------
+# Define Application Output
+# -------------------------
+shinyServer(
   function(input, output, session) {
     
     choice <- reactive({
@@ -17,7 +20,7 @@
       if (input$specie != "All"){
         Range <- choice() %>% filter(Specie == input$specie) %>% select(Range_Restrict) %>% as.character
         Range <- unlist(strsplit(Range, ", "))
-        if(!is.null(Range)) Ac <- unique(Range)
+        if(length(Range)>0) Ac <- unique(Range)
       }
       Ac
     })
@@ -31,13 +34,13 @@
       if (input$specie != "All") s <- choice() %>% filter(Specie %in% input$specie) %>% select(Abbr)
       data <- est %>% select(one_of(paste0(s, input$prob)))
       if (input$specie == "All"){
-          weight <- choice()[, input$prob]
-          w <- matrix(rep(prop.table(weight), each = nrow(data)), nr = nrow(data))
-          data <-  rowSums(data * w, na.rm = T)
+        weight <- choice()[, input$prob]
+        w <- matrix(rep(prop.table(weight), each = nrow(data)), nr = nrow(data))
+        data <-  rowSums(data * w, na.rm = T)
       }
       data <- est %>% select(x, y, LAND, COUNTY, WMU) %>% bind_cols(data.frame(data)) 
       names(data) <- c("x", "y", "LAND", "COUNTY", "WMU", "value")
-      data$value[!data$LAND %in% if(is.null(input$region)) levels(data$LAND) else input$region] <- NaN
+      data$value[!data$LAND %in% if(is.null(input$region)) levels(data$LAND) else input$region] <- NA
       return(data)
     })
     
@@ -45,7 +48,8 @@
       input$go
       d <- isolate(data())
       type <- isolate(ifelse(input$prob == "Psi", "Occupancy", "Colonization"))
-      title <- isolate(paste(sub("\\s+$", "", input$specie), type))
+      name <- isolate(if(input$specie == "All") paste(ifelse(input$kind == "Bird", input$cat, ""), input$kind) else input$specie)
+      title <- isolate(paste(sub("\\s+$", "", name), type))
       myplot <- ggplot(d, aes(x = x, y = y, fill = value)) + geom_tile() + 
         scale_fill_gradient2(limits = c(0, 1), low = "skyblue2",
                              high = "red", mid = "yellow", midpoint = 0.5,
@@ -86,7 +90,7 @@
     range <- reactiveValues(x = NULL, y = NULL)
     
     observeEvent(input$go, {
-      sp <- NULL
+      sp <- est %>% select(x, y)
       if ("Public" %in% input$Boundary & !is.null(input$public)){
         sp <- pp %>% filter(Name %in% input$public) %>% select(x, y)
       }
@@ -148,7 +152,7 @@
     })
     
     cova <- reactive({
-      if (input$specie != "All"){
+      if ((input$specie) != "All"){
         s0 <- unlist(strsplit(unlist(model[unlist(indice()), "Model"]), "[()]"))
         s1 <- s0[grep("~", s0)]
         names(s1) <- c("Psi", "Gam", "p")
@@ -159,7 +163,7 @@
     
     output$model_info <- renderText({
       if (input$specie != "All")
-        paste("Best Model Covariates:", cova()[input$prob])
+        paste(input$specie, "Best Model Covariates:", cova()[input$prob])
     })
     
     output$Parameter <- renderTable({
@@ -181,8 +185,7 @@
     
     output$table1 <- DT::renderDataTable({
       datatable(model %>% filter(No %in% unlist(indice())) %>%
-                  select(No, Species, Model, Auc, psi.Cov, Psi.CI, gam.Cov, Gam.CI, p.Cov, p.CI, p.s, o.s, g.s),
-                #                caption = "This is the table of model coefficient estimates",
+                  select(No, Species, Model, Auc, Psi.Cov, Psi.CI, Gam.Cov, Gam.CI, p.Cov, p.CI, p.s, o.s, g.s),
                 class = "compact display nowrap", rownames = FALSE,
                 options = list(autoWidth = FALSE,
                                columnDefs = list(
@@ -190,26 +193,25 @@
                                  list(className = 'dt-center', targets = c(0, 3:9)),
                                  list(targets = 10:12, visible = FALSE)),
                                dom = "lfrt<B>p",
-                               buttons = c("copy","excel","pdf", "print")
+                               buttons = c("print", "copy", "csv")
                 ) 
-      ) %>% formatRound(c("Auc", "psi.Cov", "gam.Cov", "p.Cov"), 2) %>%
-        formatStyle(c("psi.Cov", "gam.Cov", "p.Cov"), backgroundColor = "skyblue") %>%
-        formatStyle(c("psi.Cov", "Psi.CI"), "o.s", fontWeight = styleEqual(c(0, 1), c("normal", "bold"))) %>%
-        formatStyle(c("gam.Cov", "Gam.CI"), "g.s", fontWeight = styleEqual(c(0, 1), c("normal", "bold"))) %>%
+      ) %>% formatRound(c("Auc", "Psi.Cov", "Gam.Cov", "p.Cov"), 2) %>%
+        formatStyle(c("Psi.Cov", "Gam.Cov", "p.Cov"), backgroundColor = "skyblue") %>%
+        formatStyle(c("Psi.Cov", "Psi.CI"), "o.s", fontWeight = styleEqual(c(0, 1), c("normal", "bold"))) %>%
+        formatStyle(c("Gam.Cov", "Gam.CI"), "g.s", fontWeight = styleEqual(c(0, 1), c("normal", "bold"))) %>%
         formatStyle(c("p.Cov", "p.CI"), "p.s", fontWeight = styleEqual(c(0, 1), c("normal", "bold")))
     })
     
     output$table2 <- DT::renderDataTable({
       datatable(para %>% filter(No %in% unlist(indice())) %>%
                   select(No, Species, Psi, Psi.CI, Gam, Gam.CI, p, p.CI),
-                #                caption = "This is the table of real parameter estimates",
                 class = "compact display nowrap", rownames = FALSE,
                 options = list(autoWidth = FALSE,
                                columnDefs = list(
                                  list(width = '300px', targets = 1),
                                  list(className = 'dt-center', targets = c(0, 2:7))),
                                dom = "lfrt<B>p",
-                               buttons = c("copy","excel","pdf", "print")
+                               buttons = c("print", "copy", "csv")
                 ) 
       ) %>% formatRound(c("Psi", "Gam", "p"), 2) %>% 
         formatStyle(c("Psi", "Gam","p"), backgroundColor = "skyblue")

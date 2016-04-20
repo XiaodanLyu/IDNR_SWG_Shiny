@@ -1,4 +1,6 @@
-# Define UI for application that displays prediction Map
+# --------------------------------
+# Define UI for application layout
+# --------------------------------
 shinyUI(
   navbarPage(
     title = "IDNR_SWG App",
@@ -24,13 +26,13 @@ shinyUI(
                                selected = "Bird"),
                    conditionalPanel(condition = "input.kind == 'Bird'",
                                     selectInput("cat", "Select Bird Category:",
-                                                choice = unique(index$Category),
+                                                choices = unique(index$Category),
                                                 selected = "Woodland")),
                    selectInput("prob", "Probability Type:",
                                choices = c(Occupancy = "Psi", Colonization = "Gam"),
                                selected = "Psi"),
                    selectInput("specie", "Select Specie:", 
-                               choices = NULL),
+                               choices = "All"),
                    checkboxGroupInput("Boundary", "Boundary to show",
                                       choices = c(`Landform Region` = "Land", "County",
                                                   `Wildlife Management Units` = "WMU", `Public Lands` = "Public"),
@@ -52,7 +54,7 @@ shinyUI(
                         br(),
                         h2("Introduction", align = "center"),
                         p("The map displays predicted values for the parameter of interest based on the covariate for the
-                                   respective parameter from the", strong("best model"), "."),
+                                   respective parameter from the", strong("best model.")),
                         p("Shiny is a new package from RStudio that makes it ", 
                           em("incredibly easy"), 
                           " to build interactive web applications with R.
