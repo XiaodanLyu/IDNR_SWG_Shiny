@@ -18,7 +18,7 @@ shinyServer(
       cc <- index %>% filter(Kind == input$kind)
       if(input$kind == "Bird")
         cc <- cc %>% filter(Category == input$cat)
-      cc %>% filter(!is.na(input$prob))
+      cc[!is.na(cc[, input$prob]), ]
     }) 
     
     observe({
@@ -45,7 +45,9 @@ shinyServer(
       data <- est %>% select(one_of(paste0(s, input$prob)))
       if (input$specie == "All"){
         weight <- choice()[, input$prob]
-        w <- matrix(rep(prop.table(weight), each = nrow(data)), nr = nrow(data))
+        w <- matrix(rep(weight, each = nrow(data)), nr = nrow(data))
+        w[is.na(data)] <- NA
+        w <- w/rowSums(w, na.rm = T)
         data <-  rowSums(data * w, na.rm = T)
       }
       data <- est %>% select(x, y, LAND, COUNTY, WMU) %>% bind_cols(data.frame(data)) 
@@ -61,7 +63,7 @@ shinyServer(
       name <- isolate(if(input$specie == "All") paste(ifelse(input$kind == "Bird", input$cat, ""), input$kind) else input$specie)
       title <- isolate(paste(sub("\\s+$", "", name), type))
       myplot <- ggplot(d, aes(x = x, y = y, fill = value)) + geom_tile() + 
-        scale_fill_gradient2(limits = c(0, 1), low = "skyblue2",
+        scale_fill_gradient2(limits = c(0, 1), low = "deepskyblue",
                              high = "red", mid = "yellow", midpoint = 0.5,
                              guide = guide_colorbar(title = "Probability", title.vjust = -0.5)) +
         labs(x = "", y = "", title = title) + theme_classic() +
