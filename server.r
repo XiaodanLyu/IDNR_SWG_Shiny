@@ -4,6 +4,16 @@
 shinyServer(
   function(input, output, session) {
     
+#     choice <- reactiveValues(specie = NULL, range = NULL)
+#     
+#     observe({
+#       sub_index <- index %>% filter(Kind == input$kind)
+#       if(input$kind == "Bird")
+#         sub_index <- sub_index %>% filter(Category == input$cat)
+#       sub_index <- sub_index %>% filter(!is.na(input$prob))
+#       choice$range <- sub_index %>% select(Specie)
+#     })
+    
     choice <- reactive({
       cc <- index %>% filter(Kind == input$kind)
       if(input$kind == "Bird")

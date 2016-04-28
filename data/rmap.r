@@ -1,6 +1,8 @@
-specie <- "KEWA"
+specie <- "ARPL"
 prob <- "Psi"
 prob <- "Gam"
+prob <- "Eps"
+
 add.new()
 
 add.new <- function(){
@@ -11,6 +13,14 @@ add.new <- function(){
   dd <- read.csv("./data/Predicted_values.csv", header = T)
   newd <- cbind(dd, d[, dname])
   names(newd) <- c(colnames(dd), dname)
+  
+  Range <- index %>% filter(Abbr == specie) %>% select(Range_Restrict) %>% as.character
+  Range <- unlist(strsplit(Range, ", "))
+  print(all(Range %in% levels(est$LAND)))
+  if (length(Range)>0) {
+    newd[!(est$LAND %in% Range), dname] <- NA
+  }
+  
   write.csv(newd, "./data/Predicted_values.csv", row.names  = F)
 }
 
@@ -29,7 +39,4 @@ require(ggvis)
 d %>% ggvis(~x, ~y, fill=~get(dname)) %>% layer_points() %>%
   scale_numeric("fill", range = "category10")
 
-Range <- index %>% filter(Abbr == "KEWA") %>% select(Range_Restrict) %>% as.character
-Range <- unlist(strsplit(Range, ", "))
-all(Range %in% levels(est$LAND))
-newd[!(est$LAND %in% Range), dname] <- NaN
+
