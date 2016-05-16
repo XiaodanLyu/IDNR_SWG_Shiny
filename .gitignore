@@ -9,3 +9,6 @@
 
 # ignore markdown html
 *.html
+
+# ignore rsconnect file
+rsconnect
