@@ -56,8 +56,17 @@ shinyServer(
       return(data)
     })
     
+    output$downloaddata <- downloadHandler(
+      filename = function() {
+        paste(input$specie, " ", input$kind, " ", input$prob, ".txt", sep = "")
+      },
+      content = function(con) {
+        write.table(data()[, c("x", "y", "value")], con, row.names = FALSE, quote = F)
+      }
+    )
+    
     plotInput <- reactive({
-      input$go
+      input$update
       d <- isolate(data())
       type <- isolate(ifelse(input$prob == "Psi", "Occupancy", "Colonization"))
       name <- isolate(if(input$specie == "All") paste(ifelse(input$kind == "Bird", input$cat, ""), input$kind) else input$specie)
@@ -101,7 +110,7 @@ shinyServer(
     
     range <- reactiveValues(x = NULL, y = NULL)
     
-    observeEvent(input$go, {
+    observeEvent(input$update, {
       sp <- est %>% select(x, y)
       if ("Public" %in% input$Boundary & !is.null(input$public)){
         sp <- pp %>% filter(Name %in% input$public) %>% select(x, y)
@@ -176,13 +185,6 @@ shinyServer(
     output$model_info <- renderText({
       if (input$specie != "All")
         paste(input$specie, "Best Model Covariates:", cova()[input$prob])
-    })
-    
-    output$Parameter <- renderTable({
-      res <- para[ind(), c("Psi.CI", "Gam.CI", "p.CI")]
-      if(!is.na(para[ind(), "Eps.CI"]))
-        res <- c(res, para[ind(), "Eps.CI"])
-      res
     })
     
     options(DT.options = list(pageLength = 15, language = list(search = 'Species Search:')))
