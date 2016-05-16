@@ -44,10 +44,10 @@ shinyUI(
                    selectInput("region", "Landform region name contains (e.g., Iowan Surface)",
                                levels(est$LAND), multiple = TRUE, selectize = TRUE),
                    hr(),
-                   actionButton("go", "Update Map", class = "btn btn-primary"),
-                   hr(),
-                   radioButtons("maptype", "Map type:", c("tiff", "png", "jpeg", "pdf")),
-                   downloadButton('downloadPlot', 'Download Map', class = "btn btn-success")
+                   actionButton("update", "Update Map", class = "btn btn-primary")
+#                    hr(),
+#                    radioButtons("maptype", "Map type:", c("tiff", "png", "jpeg", "pdf")),
+#                    downloadButton('downloadPlot', 'Download Map', class = "btn btn-success")
                  )
                  ),
                  column(width = 9,
@@ -86,6 +86,14 @@ shinyUI(
                           column(width = 5,
                                  tags$b("Hover Point Information:"),
                                  verbatimTextOutput("hover_info"))
+                        ),
+                        br(),
+                        fluidRow(
+                          column(width = 5,
+                                 radioButtons("maptype", "Map type:", c("tiff", "png", "jpeg", "pdf")),
+                                 downloadButton('downloadPlot', 'Download Map', class = "btn btn-success")),
+                          column(width = 5,
+                                 downloadLink('downloaddata', 'Download Predicted Values'))
                         )
                  )
                )
