@@ -10,7 +10,6 @@ shinyUI(
              tags$style(type="text/css",
                         ".shiny-output-error { visibility: hidden; }",
                         ".shiny-output-error:before { visibility: hidden; }"),
-             # singleton(tags$head(tags$script(src = "https://code.jquery.com/jquery-1.11.3.min.js"))),
              singleton(tags$head(tags$link(rel="stylesheet", type="text/css", href = "https://cdn.datatables.net/buttons/1.1.2/css/buttons.dataTables.min.css"))),
              singleton(tags$head(tags$script(src = "https://cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"))),
              singleton(tags$head(tags$script(src = "https://cdn.datatables.net/buttons/1.1.2/js/dataTables.buttons.min.js"))),
@@ -36,7 +35,7 @@ shinyUI(
                    checkboxGroupInput("Boundary", "Boundary to show",
                                       choices = c(`Landform Region` = "Land", "County",
                                                   `Wildlife Management Units` = "WMU", `Public Lands` = "Public"),
-                                      select = "Land"),
+                                      select = "Land", inline = F),
                    selectInput("public", "Public land name contains (e.g., Adair WMA)",
                                levels(pp$Name), multiple = TRUE, selectize = TRUE),
                    selectInput("county", "County name contains (e.g., Story)",
@@ -45,22 +44,20 @@ shinyUI(
                                levels(est$LAND), multiple = TRUE, selectize = TRUE),
                    hr(),
                    actionButton("update", "Update Map", class = "btn btn-primary")
-#                    hr(),
-#                    radioButtons("maptype", "Map type:", c("tiff", "png", "jpeg", "pdf")),
-#                    downloadButton('downloadPlot', 'Download Map', class = "btn btn-success")
                  )
                  ),
                  column(width = 9,
                         br(),
-                        h2("Introduction", align = "center"),
-                        p("The map displays predicted values for the parameter of interest based on the covariate for the
-                                   respective parameter from the", strong("best model.")),
-                        p("Shiny is a new package from RStudio that makes it ", 
-                          em("incredibly easy"), 
-                          " to build interactive web applications with R.
-                                 For an introduction and live examples, visit the ",
-                          a("Shiny homepage.", 
-                            href = "http://www.rstudio.com/shiny")),
+#                        h2("Introduction", align = "center"),
+                        p("In an effort to prioritize areas of conservation action for all wildlife in Iowa, 
+                          particularly Species of Greatest Conservation Need (SGCN),
+                          the Iowa Department of Natural Resources", a("(Iowa DNR)", href = "http://www.iowadnr.gov/"), 
+                          "partnered with the Center for Survey Statistics and Methodology",
+                          a("(CSSM)", href = "http://www.cssm.iastate.edu/"), 
+                          "at Iowa State University to develop predictive occurrence maps for 
+                          SGCN using data from the MSIM Program."),
+                        p("The following map displays predicted values for the parameter of interest based on the covariate for the
+                          respective parameter from the", strong("best model.")),
                         br(),
                         fluidRow(
                           column(width = 6, offset = 2,
@@ -90,22 +87,24 @@ shinyUI(
                         br(),
                         fluidRow(
                           column(width = 5,
-                                 radioButtons("maptype", "Map type:", c("tiff", "png", "jpeg", "pdf")),
-                                 downloadButton('downloadPlot', 'Download Map', class = "btn btn-success")),
+                                 radioButtons("maptype", "Map type:", c("tiff", "png", "jpeg", "pdf"), inline = T),
+                                 downloadButton('downloadPlot', 'Download Map', class = "btn btn-success")
+                          ),
                           column(width = 5,
-                                 downloadLink('downloaddata', 'Download Predicted Values'))
+                                 downloadLink('downloaddata', 'Download Predicted Values')
+                          )
                         )
                  )
                )
              )
     ),
     tabPanel("Estimate",
-             tags$b("Check to see the estimates of all species"),
+             helpText("Check to see the estimates of all species"),
              checkboxInput("all.est", "Show All", value = FALSE),
              tabsetPanel(
                tabPanel("Model", br(),
                         h5("The table displays the best model for each species as well as the effect size (.Cov) and confidence 
-                          interval (.CI) for the respective covariate on occupancy (psi), colonization (gam), and detection (p) 
+                          interval (.CI) for the respective covariate on occupancy (Psi), colonization (Gam), and detection (p) 
                           probabilities."),
                         h5(strong("Bold"), "text indicates a significant effect (confidence interval does not include zero)."),
                         br(),

@@ -21,9 +21,9 @@ shinyServer(
       cc[!is.na(cc[, input$prob]), ]
     }) 
     
-    observe({
-      updateSelectInput(session, "specie", choices = c("All", choice()$Specie))
-    })
+     observe({
+       updateSelectInput(session, "specie", choices = c("All", choice()$Specie))
+     })
     
     Achoices <- reactive({
       Ac <- levels(est$LAND)
@@ -98,7 +98,9 @@ shinyServer(
     })
     
     output$Map <- renderPlot({
-      plotInput()
+      withProgress(message = "Making map", value = 0, {
+        plotInput()
+      })
     })
     
     output$downloadPlot <- downloadHandler(
@@ -112,10 +114,10 @@ shinyServer(
     
     observeEvent(input$update, {
       sp <- est %>% select(x, y)
-      if ("Public" %in% input$Boundary & !is.null(input$public)){
+      if (!is.null(input$public)){
         sp <- pp %>% filter(Name %in% input$public) %>% select(x, y)
       }
-      if ("County" %in% input$Boundary & !is.null(input$county)){
+      if (!is.null(input$county)){
         sp <- est %>% filter(COUNTY %in% input$county) %>% select(x, y)
       }
       sr <- list(x = diff(range(sp$x)), y = diff(range(sp$y)),
