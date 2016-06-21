@@ -5,7 +5,7 @@ if (!require("shiny")) install.packages("shiny")
 if (!require("readxl")) install.packages("readxl")
 if (!require("devtools")) install.packages("devtools")
 if (!require("DT")) devtools::install_github('rstudio/DT')
-if (!require("ggplot2")) install.packages("ggplot2")
+if (!require("ggplot2")) devtools::install_github("hadley/ggplot2")
 if (!require("dplyr")) install.packages("dplyr")
 
 library(shiny)
