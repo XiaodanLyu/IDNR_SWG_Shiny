@@ -1,6 +1,6 @@
-## ---------------------------------------------------
+## ====================================================
 ## require package shiny, readxl, DT, ggplot2 and dplyr
-## ---------------------------------------------------
+## ====================================================
 if (!require("shiny")) install.packages("shiny")
 if (!require("readxl")) install.packages("readxl")
 if (!require("devtools")) install.packages("devtools")
@@ -12,7 +12,7 @@ library(shiny)
 library(ggplot2)
 library(DT)
 library(dplyr)
-## ----------------------------------------------------
+## ======================================================
 
 # The index list for all species
 index <<- read.csv("./data/Index.csv", header = T, as.is = T)
