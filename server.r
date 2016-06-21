@@ -1,18 +1,8 @@
-# -------------------------
+# ==========================
 # Define Application Output
-# -------------------------
+# ==========================
 shinyServer(
   function(input, output, session) {
-    
-#     choice <- reactiveValues(specie = NULL, range = NULL)
-#     
-#     observe({
-#       sub_index <- index %>% filter(Kind == input$kind)
-#       if(input$kind == "Bird")
-#         sub_index <- sub_index %>% filter(Category == input$cat)
-#       sub_index <- sub_index %>% filter(!is.na(input$prob))
-#       choice$range <- sub_index %>% select(Specie)
-#     })
     
     choice <- reactive({
       cc <- index %>% filter(Kind == input$kind)
@@ -74,10 +64,11 @@ shinyServer(
       myplot <- ggplot(d, aes(x = x, y = y, fill = value)) + geom_tile() + 
         scale_fill_gradient2(limits = c(0, 1), low = "deepskyblue",
                              high = "red", mid = "yellow", midpoint = 0.5,
-                             guide = guide_colorbar(title = "Probability", title.vjust = -0.5)) +
+                             guide = guide_colorbar(title = NULL, barwidth = 0.8, barheight = 4,
+                                                    label.theme = element_text(size = 6.5, angle = 0))) +
         labs(x = "", y = "", title = title) + theme_classic() +
         coord_cartesian(xlim = range$x, ylim = range$y) +
-        theme(plot.title = element_text(size = rel(2)),
+        theme(plot.title = element_text(size = rel(1.75)),
               axis.text.x=element_blank(),
               axis.text.y=element_blank(),
               line = element_blank(),
@@ -101,7 +92,7 @@ shinyServer(
       withProgress(message = "Making map", value = 0, {
         plotInput()
       })
-    })
+    }, res = 100)
     
     output$downloadPlot <- downloadHandler(
       filename <- function() 
