@@ -11,9 +11,9 @@ shinyServer(
       cc[!is.na(cc[, input$prob]), ]
     }) 
     
-     observe({
-       updateSelectInput(session, "specie", choices = c("All", choice()$Specie))
-     })
+    observe({
+      updateSelectInput(session, "specie", choices = c("All", choice()$Specie))
+    })
     
     Achoices <- reactive({
       Ac <- levels(est$LAND)
@@ -61,14 +61,16 @@ shinyServer(
       type <- isolate(ifelse(input$prob == "Psi", "Occupancy", "Colonization"))
       name <- isolate(if(input$specie == "All") paste(ifelse(input$kind == "Bird", input$cat, ""), input$kind) else input$specie)
       title <- isolate(paste(sub("\\s+$", "", name), type))
+      caption <- isolate(if(is.null(input$county)) input$public else input$county)
       myplot <- ggplot(d, aes(x = x, y = y, fill = value)) + geom_tile() + 
         scale_fill_gradient2(limits = c(0, 1), low = "deepskyblue",
                              high = "red", mid = "yellow", midpoint = 0.5,
                              guide = guide_colorbar(title = NULL, barwidth = 0.8, barheight = 4,
                                                     label.theme = element_text(size = 6.5, angle = 0))) +
-        labs(x = "", y = "", title = title) + theme_classic() +
+        labs(x = "", y = "", title = title, caption = caption) + theme_classic() +
         coord_cartesian(xlim = range$x, ylim = range$y) +
-        theme(plot.title = element_text(size = rel(1.75)),
+        theme(plot.title = element_text(size = rel(1.75), hjust = 0.5, face = "bold"),
+              plot.caption = element_text(size = rel(0.8), face = "italic"),
               axis.text.x=element_blank(),
               axis.text.y=element_blank(),
               line = element_blank(),
@@ -96,7 +98,7 @@ shinyServer(
     
     output$downloadPlot <- downloadHandler(
       filename <- function() 
-        paste0(paste(input$kind, input$specie, input$cat, input$prob, input$public, sep = "_"), ".", input$maptype),
+        paste0(paste(input$kind, input$specie, input$cat, input$prob, input$public, input$county, sep = "_"), ".", input$maptype),
       content <- function(file) 
         ggsave(file, plotInput(), width = 6, height = 4, device = input$maptype)
     )
@@ -190,17 +192,21 @@ shinyServer(
       id
     })
     
+    tableinput1 <- reactive({
+      model %>% filter(No %in% unlist(indice())) %>%
+        select(No, Species, Model, Auc, Psi.Cov, Psi.CI, Gam.Cov, Gam.CI, p.Cov, p.CI, p.s, o.s, g.s)
+    })
+    
     output$table1 <- DT::renderDataTable({
-      datatable(model %>% filter(No %in% unlist(indice())) %>%
-                  select(No, Species, Model, Auc, Psi.Cov, Psi.CI, Gam.Cov, Gam.CI, p.Cov, p.CI, p.s, o.s, g.s),
+      datatable(tableinput1(),
                 class = "compact display nowrap", rownames = FALSE,
                 options = list(autoWidth = FALSE,
                                columnDefs = list(
                                  list(width = '500px', targets = 2),
                                  list(className = 'dt-center', targets = c(0, 3:9)),
-                                 list(targets = 10:12, visible = FALSE)),
-                               dom = "lfrt<B>p",
-                               buttons = c("print", "copy", "csv")
+                                 list(targets = 10:12, visible = FALSE))
+#                                dom = "lfrt<B>p",
+#                                buttons = c("print", "copy", "csv")
                 ) 
       ) %>% formatRound(c("Auc", "Psi.Cov", "Gam.Cov", "p.Cov"), 2) %>%
         formatStyle(c("Psi.Cov", "Gam.Cov", "p.Cov"), backgroundColor = "skyblue") %>%
@@ -209,19 +215,36 @@ shinyServer(
         formatStyle(c("p.Cov", "p.CI"), "p.s", fontWeight = styleEqual(c(0, 1), c("normal", "bold")))
     })
     
+    output$downloadData1 <- downloadHandler(
+      filename = function()
+        paste(paste(input$kind, input$specie, input$cat, "Estimate", sep = "_"), '.csv', sep = ''),
+      content = function(file)
+        write.csv(tableinput1()[, -(11:13)], file, row.names = F, na = "")
+    )
+    
+    tableinput2 <- reactive(
+      para %>% filter(No %in% unlist(indice())) %>%
+        select(No, Species, Psi, Psi.CI, Gam, Gam.CI, p, p.CI)
+    )
+    
     output$table2 <- DT::renderDataTable({
-      datatable(para %>% filter(No %in% unlist(indice())) %>%
-                  select(No, Species, Psi, Psi.CI, Gam, Gam.CI, p, p.CI),
+      datatable(tableinput2(),
                 class = "compact display nowrap", rownames = FALSE,
                 options = list(autoWidth = FALSE,
                                columnDefs = list(
                                  list(width = '300px', targets = 1),
-                                 list(className = 'dt-center', targets = c(0, 2:7))),
-                               dom = "lfrt<B>p",
-                               buttons = c("print", "copy", "csv")
+                                 list(className = 'dt-center', targets = c(0, 2:7)))
+#                                dom = "lfrt<B>p",
+#                                buttons = c("print", "copy", "csv")
                 ) 
       ) %>% formatRound(c("Psi", "Gam", "p"), 2) %>% 
         formatStyle(c("Psi", "Gam","p"), backgroundColor = "skyblue")
     })
     
+    output$downloadData2 <- downloadHandler(
+      filename = function()
+        paste(paste(input$kind, input$specie, input$cat, "Para", sep = "_"), '.csv', sep = ''),
+      content = function(file)
+        write.csv(tableinput2(), file, row.names = F, na = "")
+    )
   })
