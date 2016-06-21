@@ -10,13 +10,13 @@ shinyUI(
              tags$style(type="text/css",
                         ".shiny-output-error { visibility: hidden; }",
                         ".shiny-output-error:before { visibility: hidden; }"),
-             singleton(tags$head(tags$link(rel="stylesheet", type="text/css", 
-                                           href = "https://cdn.datatables.net/buttons/1.1.2/css/buttons.dataTables.min.css"))),
-             singleton(tags$head(tags$script(src = "https://cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"))),
-             singleton(tags$head(tags$script(src = "https://cdn.datatables.net/buttons/1.1.2/js/dataTables.buttons.min.js"))),
-             singleton(tags$head(tags$script(src = "https://cdn.datatables.net/buttons/1.1.2/js/buttons.flash.min.js"))),
-             singleton(tags$head(tags$script(src = "https://cdn.datatables.net/buttons/1.1.2/js/buttons.html5.min.js"))),
-             singleton(tags$head(tags$script(src = "https://cdn.datatables.net/buttons/1.1.2/js/buttons.print.min.js"))),
+#              singleton(tags$head(tags$link(rel="stylesheet", type="text/css", 
+#                                            href = "https://cdn.datatables.net/buttons/1.1.2/css/buttons.dataTables.min.css"))),
+#              singleton(tags$head(tags$script(src = "https://cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"))),
+#              singleton(tags$head(tags$script(src = "https://cdn.datatables.net/buttons/1.1.2/js/dataTables.buttons.min.js"))),
+#              singleton(tags$head(tags$script(src = "https://cdn.datatables.net/buttons/1.1.2/js/buttons.flash.min.js"))),
+#              singleton(tags$head(tags$script(src = "https://cdn.datatables.net/buttons/1.1.2/js/buttons.html5.min.js"))),
+#              singleton(tags$head(tags$script(src = "https://cdn.datatables.net/buttons/1.1.2/js/buttons.print.min.js"))),
              fluidPage(
                fluidRow(
                  column(width = 3, wellPanel(
@@ -108,12 +108,14 @@ shinyUI(
                           probabilities."),
                         p(strong("Bold"), "text indicates a significant effect (confidence interval does not include zero)."),
                         hr(),
-                        DT::dataTableOutput('table1')),
+                        DT::dataTableOutput('table1'),
+                        downloadButton('downloadData1', 'Download Table', class = "btn btn-success")),
                tabPanel("Real Parameter", br(),
                         p("The table displays the real parameter estimates and confidence intervals for occupancy (Psi),
                            colonization (Gam), and detection (p) probabilities obtained from the best model for each species."),
                         hr(),
-                        DT::dataTableOutput('table2')))
+                        DT::dataTableOutput('table2'),
+                        downloadButton('downloadData2', 'Download Table', class = "btn btn-success")))
     )
   )
 )
