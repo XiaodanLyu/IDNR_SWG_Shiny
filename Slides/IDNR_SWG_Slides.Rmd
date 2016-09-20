@@ -1,0 +1,133 @@
+---
+title: "Shiny Application to Iowa DNR MSIM-SGCN Modeling"
+author: "Xiaodan (Annie) Lyu, Tyler M. Harms"
+date: "September 23, 2016"
+output: beamer_presentation
+theme: Malmoe
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Introduction
+
+- Data Collection  
+    + Multiple Species Inventory and Monitoring (MSIM) Program  
+    + Iowa DNR and Iowa State University
+- Survey Objects  
+    + 414 SGCN, only 69 SGCN where sufficient data were available
+    + Birds, mammals, reptiles, amphibians, odonates and butterflies
+- Primary Sampling Interval  
+    + 2006-2014
+
+## Objectives
+
+- Predict the distribution of species of conservation need  
+    + robust design occupancy model
+- Create predictive species maps for priority SGCN  
+    + ArcGIS raster files
+    + Shiny interactive web application
+- Prioritize areas of conservation action for SGCN  
+    + habitat restoration and management
+
+## Methods
+
+- Robust design occupancy model (MacKenzie et al. 2003)  
+    + package RMark
+- Parameters of Interest  
+    + probability of occupancy ($\psi$)
+    + probability of colonization ($\gamma$)
+    + probability of extinction ($\epsilon$)
+    + probability of detection ($p$)
+- Model types
+    + RDOccupEG, RDOccupPE, RDOccupPG, ...
+
+## Methods
+
+- Including Covariates
+$$ \theta = \frac{exp(\boldsymbol{Z'\beta})}{1+exp(\boldsymbol{Z'\beta})} $$
+    + $\theta$ is the probability of interest
+    + $\mathbf{Z}$ is the matrix of covariate information
+    + $\boldsymbol{\beta}$ is the vector of logistic model coefficients to be estimated
+    
+----
+
+- Landscape habitat variables
+    + Radius of sampled site: 200m, 500m and 1km
+    + Land use classification:   
+      Water, Wetland, Grassland, Woodland and Agriculture
+    + Landscape configuration:  
+      percentage of landscape (PLAND), large patch index (LPI),
+      edge density (ED), patch density (PD) and interspersion-juxtaposition (IJI)
+- Climate variables
+    + Wind, Cloud, Temperature
+
+## Model Selection and Validation
+
+- Akaike's Information Criterion adjusted for small sizes ($\text{AIC}_c$)  
+    + Models with $\Delta \text{AIC}_c \leq 2 \Rightarrow$  strong support  
+      (Burnham and Anderson 2002)
+- Area under the receiver operating characteristic curve (AUC)  
+    + evaluate performance of predicting occupancy
+    + training data set: survey years 2006-2012, 2004
+    + test data set: survey year 2013 (better representative)
+    + package pROC
+    + $\text{AUC} = 0.5 \Rightarrow$ random guess
+    + $\text{AUC} = 1.0 \Rightarrow$ perfect prediction  
+      (Jimenez-Valverde 2012)
+  
+## Results
+
+| Statistics | Value/Range | 
+| ------------ | -------- |
+| Number of SGCN modeled | 64 out of 69 |
+| Occupancy Prob $\hat\psi$ | 0.001(0.0003)~0.995(0.004) |
+| Colonization Prob $\hat\gamma$ | 0.0003(0.0001)~0.999(0.00007) |
+| Detection Prob $\hat p$ | 0.030(0.028)~0.998(0.006) |
+| AUC values | 0.426~0.921 |
+| Number of $\text{AUC} > 0.5$ | 61 out of 64 |
+
+----
+
+```{r, echo=F}
+d <- read.csv("C:/Users/lyux/Dropbox/CSSM Project/IDNR_SWG_Shiny/data/Bird_All_Woodland_Estimate.csv")
+knitr::kable(head(d[,2:3]), caption = "Best Models for Each Specie")
+```      
+
+----
+
+```{r, echo=FALSE}
+knitr::kable(head(d[,c(2,4,5,7,9)]), digits=3, caption = "AUC and Coefficients Estimates under Best Model")
+```
+
+----
+
+![Predictive Map](images/PPGC.jpeg)
+
+----
+
+![Predictive Map of Range-Restricted Specie](images/NOBO.jpeg)
+
+## Shiny
+
+- **Shiny** by RStudio is a web application framework for R.  
+- No HTML, CSS or JavaScript knowledge required to turn your analyses into interactive web applications.
+
+```{r, eval=FALSE, echo=T}
+install.packages("shiny")
+library("shiny")
+runExample("01_hello")
+```
+
+- ui.R defines the page layout and user interface
+- server.R contains the R code to create any output
+- More information available at [\colorbox{yellow}{Shiny Webpage}](http://shiny.rstudio.com/)
+
+## About Our Shiny Application
+
+- Interactive web application to display predictive maps and parameter estimates for each SGCN
+- Easy to download personalized data and maps
+- Available to researchers and managers across Iowa (credentials needed)
+- Hosted by CSSM for 1-2 years
+- The URL for accessing the application is [\colorbox{yellow}{https://dnrswg.cssm.iastate.edu/}](https://dnrswg.cssm.iastate.edu/)

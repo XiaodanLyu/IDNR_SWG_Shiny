@@ -70,7 +70,7 @@ shinyServer(
         labs(x = "", y = "", title = title, caption = caption) + theme_classic() +
         coord_cartesian(xlim = range$x, ylim = range$y) +
         theme(plot.title = element_text(size = rel(1.75), hjust = 0.5, face = "bold"),
-              plot.caption = element_text(size = rel(0.8), face = "italic"),
+              # plot.caption = element_text(size = rel(0.8), face = "italic"),
               axis.text.x=element_blank(),
               axis.text.y=element_blank(),
               line = element_blank(),
