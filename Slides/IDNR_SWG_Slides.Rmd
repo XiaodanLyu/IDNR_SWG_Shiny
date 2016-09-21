@@ -12,14 +12,29 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## Introduction
 
-- Data Collection  
-    + Multiple Species Inventory and Monitoring (MSIM) Program  
+- Period: Oct 2015 - May 2016
+- State Wildlife Grants - Iowa Department of Natural Resources
+- Run predictive models using R package RMark
+- Produce predictive maps using ArcGIS
+- Develop an interactive web application using Shiny 
+
+## Outline
+
+- Project overview: data source and objectives
+- Methods: model fit and covariates
+- Model Validation: AUC
+- Results: example of estimates table and predictive maps
+- Demonstrate Shiny application
+
+## Data Collection
+
+- Multiple Species Inventory and Monitoring (MSIM) Program  
     + Iowa DNR and Iowa State University
+- Primary Sampling Interval  
+    + 2006-2014    
 - Survey Objects  
     + 414 SGCN, only 69 SGCN where sufficient data were available
     + Birds, mammals, reptiles, amphibians, odonates and butterflies
-- Primary Sampling Interval  
-    + 2006-2014
 
 ## Objectives
 
@@ -51,7 +66,7 @@ $$ \theta = \frac{exp(\boldsymbol{Z'\beta})}{1+exp(\boldsymbol{Z'\beta})} $$
     + $\mathbf{Z}$ is the matrix of covariate information
     + $\boldsymbol{\beta}$ is the vector of logistic model coefficients to be estimated
     
-----
+## Covariates    
 
 - Landscape habitat variables
     + Radius of sampled site: 200m, 500m and 1km
@@ -103,11 +118,11 @@ knitr::kable(head(d[,c(2,4,5,7,9)]), digits=3, caption = "AUC and Coefficients E
 
 ----
 
-![Predictive Map](images/PPGC.jpeg)
+![Predictive Map](images/YBCUGam.png)
 
 ----
 
-![Predictive Map of Range-Restricted Specie](images/NOBO.jpeg)
+![Predictive Map of Range-Restricted Specie](images/RSHAPsi.png)
 
 ## Shiny
 
@@ -131,3 +146,4 @@ runExample("01_hello")
 - Available to researchers and managers across Iowa (credentials needed)
 - Hosted by CSSM for 1-2 years
 - The URL for accessing the application is [\colorbox{yellow}{https://dnrswg.cssm.iastate.edu/}](https://dnrswg.cssm.iastate.edu/)
+
