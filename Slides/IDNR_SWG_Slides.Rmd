@@ -30,8 +30,9 @@ knitr::opts_chunk$set(echo = FALSE)
 
 - Multiple Species Inventory and Monitoring (MSIM) Program  
     + Iowa DNR and Iowa State University
-- Primary Sampling Interval  
-    + 2006-2014    
+- Sampling Interval  
+    + Primary: 2006-2014
+    + Secondary: survey occasions (days)
 - Survey Objects  
     + 414 SGCN, only 69 SGCN where sufficient data were available
     + Birds, mammals, reptiles, amphibians, odonates and butterflies
@@ -58,25 +59,55 @@ knitr::opts_chunk$set(echo = FALSE)
 - Model types
     + RDOccupEG, RDOccupPE, RDOccupPG, ...
 
-## Methods
+## Statistical Model
+
+$$ Pr(\mathbf{X}_i) = \boldsymbol{\phi}_0 \Bigg\{\prod_{t=1}^{T=1}D(\mathbf{p}_{X,t})\boldsymbol{\phi}_t \Bigg\} \mathbf{p}_{X,T} $$
+
+- $\mathbf{p}_{X,t}$ : vector denoting probability of observing the detection history $X_{i,t}$ in primary period $t$
+- $\boldsymbol{\phi}_t$ : matrix of transition probabilities between states of occupancy from primary period $t$ to $t+1$
+$$\boldsymbol{\phi}_t = \begin{bmatrix} 1-\epsilon_t & \epsilon_t \\ \gamma_t & 1-\gamma_t \end{bmatrix}, t = 1, ..., \text{T-1} $$
+$$ \phi_0 = \begin{bmatrix} \psi_1 & 1-\psi_1 \end{bmatrix} $$
+
+----    
+
+## Example
+
+$$
+\begin{small}
+\begin{aligned}
+Pr(\boldsymbol{X}_{i,1} = 010) &= \psi_1(1-p_{1,1})p_{1,2}(1-p_{1,3}) \\
+Pr(\boldsymbol{X}_{i,2} = 000|\boldsymbol{X}_{i,1}) &= (1-\epsilon_1)\prod_{j=1}^3(1-p_{2,j})+\epsilon_1 \\
+Pr(\boldsymbol{X}_i = \text{010 000}) &= \phi_0 D(\boldsymbol{p}_{010,1}) \phi_1 \boldsymbol{p}_{000,2} \\
+&= \begin{bmatrix} \psi_1 & 1-\psi_1 \end{bmatrix} 
+\begin{bmatrix} (1-p_{1,1})p_{1,2}(1-p_{1,3}) & 0 \\ 0 & 0 \end{bmatrix} \\
+&\ \ \ \times \begin{bmatrix} 1-\epsilon_1 & \epsilon_1 \\ \gamma_1 & 1-\gamma_1 \end{bmatrix} 
+\begin{bmatrix} \prod_{j=1}^3(1-p_{2,j}) \\ 1 \end{bmatrix} \\
+&= \psi_1(1-p_{1,1})p_{1,2}(1-p_{1,3})\Big[(1-\epsilon_1)\prod_{j=1}^3(1-p_{2,j})+\epsilon_1\Big]
+\end{aligned}
+\end{small}
+$$
+
+## Statistical Model
 
 - Including Covariates
 $$ \theta = \frac{exp(\boldsymbol{Z'\beta})}{1+exp(\boldsymbol{Z'\beta})} $$
     + $\theta$ is the probability of interest
     + $\mathbf{Z}$ is the matrix of covariate information
     + $\boldsymbol{\beta}$ is the vector of logistic model coefficients to be estimated
-    
+
 ## Covariates    
 
 - Landscape habitat variables
     + Radius of sampled site: 200m, 500m and 1km
-    + Land use classification:   
+    + Land use classification [^1]:   
       Water, Wetland, Grassland, Woodland and Agriculture
     + Landscape configuration:  
       percentage of landscape (PLAND), large patch index (LPI),
       edge density (ED), patch density (PD) and interspersion-juxtaposition (IJI)
 - Climate variables
-    + Wind, Cloud, Temperature
+    + Wind speed (km/h), Cloud cover (%), Temperature ($^\text{o}\text{C}$)
+
+[^1]: the 2009 Iowa Landcover file
 
 ## Model Selection and Validation
 
@@ -91,8 +122,20 @@ $$ \theta = \frac{exp(\boldsymbol{Z'\beta})}{1+exp(\boldsymbol{Z'\beta})} $$
     + $\text{AUC} = 0.5 \Rightarrow$ random guess
     + $\text{AUC} = 1.0 \Rightarrow$ perfect prediction  
       (Jimenez-Valverde 2012)
-  
+
+## ROC Curve
+
+```{r, message=F, fig.height=4, fig.width=6}
+library(pROC)
+y <- rbinom(100, size = 1, prob = 0.5)
+p <- plot.roc(y, y, main = "ROC Curve: Random Guess VS Perfect Prediction",
+     print.auc = T, auc.polygon = T, print.auc.x = 0.9, print.auc.y = 0.9,
+     identity.col = "red", identity.lwd = 2)
+```       
+
 ## Results
+
+:   Results Summary  
 
 | Statistics | Value/Range | 
 | ------------ | -------- |
