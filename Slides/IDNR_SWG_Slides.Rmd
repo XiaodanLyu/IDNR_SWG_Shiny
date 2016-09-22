@@ -97,17 +97,18 @@ $$ \theta = \frac{exp(\boldsymbol{Z'\beta})}{1+exp(\boldsymbol{Z'\beta})} $$
 
 ## Covariates    
 
-- Landscape habitat variables
+- Landscape habitat variables [^1]
     + Radius of sampled site: 200m, 500m and 1km
-    + Land use classification [^1]:   
+    + Land use classification:   
       Water, Wetland, Grassland, Woodland and Agriculture
     + Landscape configuration:  
       percentage of landscape (PLAND), large patch index (LPI),
       edge density (ED), patch density (PD) and interspersion-juxtaposition (IJI)
-- Climate variables
+- Climate variables [^2]
     + Wind speed (km/h), Cloud cover (%), Temperature ($^\text{o}\text{C}$)
 
-[^1]: the 2009 Iowa Landcover file
+[^1]: site-specific, modeled on $\psi, \gamma$ and $\epsilon$
+[^2]: time-varying, modeled on $p$
 
 ## Model Selection and Validation
 
