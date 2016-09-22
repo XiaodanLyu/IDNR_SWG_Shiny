@@ -2,7 +2,9 @@ shinyUI(pageWithSidebar(
   headerPanel("ROC Test Experiment"),
   sidebarPanel(
     h4("Simulation Setting"),
-    numericInput("n", "sample size", value = 150, step = 100),
+    numericInput("n", "sample size", min = 50, value = 150, step = 100),
+    checkboxInput("smooth", "Smooth ROC curve", value = T),
+    checkboxInput("thres", "Show Threshold value"),
     p(span("Green", style = "color:green"),
       "line represents the ROC curve of the fitted value from",
       strong('glm'), "procedure."),
@@ -13,7 +15,7 @@ shinyUI(pageWithSidebar(
   
   mainPanel(
     fluidRow(
-      column(width = 9,
+      column(width = 10,
              plotOutput("roc_plot"))
     )
   )

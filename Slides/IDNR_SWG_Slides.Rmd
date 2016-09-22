@@ -87,7 +87,7 @@ Pr(\boldsymbol{X}_i = \text{010 000}) &= \phi_0 D(\boldsymbol{p}_{010,1}) \phi_1
 \end{small}
 $$
 
-## Statistical Model
+## Statistical Model (cont'd)
 
 - Including Covariates
 $$ \theta = \frac{exp(\boldsymbol{Z'\beta})}{1+exp(\boldsymbol{Z'\beta})} $$
@@ -116,7 +116,7 @@ $$ \theta = \frac{exp(\boldsymbol{Z'\beta})}{1+exp(\boldsymbol{Z'\beta})} $$
       (Burnham and Anderson 2002)
 - Area under the receiver operating characteristic curve (AUC)  
     + evaluate performance of predicting occupancy
-    + training data set: survey years 2006-2012, 2004
+    + training data set: survey years 2006-2012, 2014
     + test data set: survey year 2013 (better representative)
     + package pROC
     + $\text{AUC} = 0.5 \Rightarrow$ random guess
@@ -130,7 +130,9 @@ library(pROC)
 y <- rbinom(100, size = 1, prob = 0.5)
 p <- plot.roc(y, y, main = "ROC Curve: Random Guess VS Perfect Prediction",
      print.auc = T, auc.polygon = T, print.auc.x = 0.9, print.auc.y = 0.9,
-     identity.col = "red", identity.lwd = 2)
+     identity.col = "red", identity.lwd = 2,
+     xlab = paste("Specificity", " p(0|0)"),
+     ylab = paste("Sensitivity", " p(1|1)"))
 ```       
 
 ## Results
