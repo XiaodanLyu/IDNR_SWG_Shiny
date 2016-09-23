@@ -65,7 +65,14 @@ $$ Pr(\mathbf{X}_i) = \boldsymbol{\phi}_0 \Bigg\{\prod_{t=1}^{T=1}D(\mathbf{p}_{
 
 - $\mathbf{p}_{X,t}$ : vector denoting probability of observing the detection history $X_{i,t}$ in primary period $t$
 - $\boldsymbol{\phi}_t$ : matrix of transition probabilities between states of occupancy from primary period $t$ to $t+1$
-$$\boldsymbol{\phi}_t = \begin{bmatrix} 1-\epsilon_t & \epsilon_t \\ \gamma_t & 1-\gamma_t \end{bmatrix}, t = 1, ..., \text{T-1} $$
+$$
+\begin{aligned}
+\boldsymbol{\phi}_t &= \begin{bmatrix} P(X_{t+1}=1|X_t=1) & P(X_{t+1}=0|X_t=1) \\
+P(X_{t+1}=1|X_t=0) & P(X_{t+1}=0|X_t=0) \end{bmatrix} \\
+&= \begin{bmatrix} 1-\epsilon_t & \epsilon_t \\ \gamma_t & 1-\gamma_t \end{bmatrix},
+t = 1, ..., \text{T-1}
+\end{aligned}
+$$
 $$ \phi_0 = \begin{bmatrix} \psi_1 & 1-\psi_1 \end{bmatrix} $$
 
 ----    

@@ -26,15 +26,21 @@ shinyServer(function(input, output, session){
     plot.roc(y, y, main = "ROC Curve", auc.polygon = T,
              identity.col = "red", identity.lwd = 2)
     plot.roc(y, yguess, smooth = input$smooth, col = "blue",
-             print.thres = input$thres, print.thres.col = "blue",
-             print.auc = T, print.auc.x = 0.4, print.auc.y = 0.4,
-             auc.polygon = T, auc.polygon.col = rgb(0,0,1, alpha = 0.5),
+             print.thres = input$thres, 
+             print.thres.col = "blue",
+             print.auc = T, 
+             print.auc.x = 0.4, print.auc.y = 0.4,
+             auc.polygon = T, 
+             auc.polygon.col = rgb(0,0,1, alpha = 0.5),
              add = T)
     plot.roc(y, yhat, smooth = input$smooth, col = "darkgreen",
-             print.thres = input$thres, print.thres.col = "darkgreen",
+             print.thres = input$thres, 
+             print.thres.col = "darkgreen",
              print.thres.adj = c(0.05, -1.25),
-             print.auc = T, print.auc.x = 0.95, print.auc.y = 0.8,
-             auc.polygon = T, auc.polygon.col = rgb(0,1,0, alpha = 0.3),
+             print.auc = T, 
+             print.auc.x = 0.95, print.auc.y = 0.8,
+             auc.polygon = T, 
+             auc.polygon.col = rgb(0,1,0, alpha = 0.3),
              add = T)
   })
   
