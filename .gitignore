@@ -16,4 +16,5 @@ rsconnect
 
 # ignore slides folder
 Slides/
+analysis/
 *.Rproj
