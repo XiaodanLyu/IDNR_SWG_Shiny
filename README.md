@@ -12,3 +12,6 @@ Below is a screenshot of the tool. On the left is an user-input panel (such as s
 
 Due to data privacy issue, we cannot share the data (used to build this Shiny tool) with the public. This tool was developed back in 2016 when some popular and useful R packages such as `plotly`, `leaflet` or `shinydashboard` were not available yet. So I have to realize user-map interaction (hover, click and zoom) brute-forcefully. Most of those interactivities were made possible by accessing the value of `plot_click`, `plot_hover` or `plot_brush`. One can find more information in the file **server.r**.
 
+## Reference
+
+Harms, T.M., Murphy, K.T., **Lyu, X.**, Patterson, S.S., Kinkead, K.E., Dinsmore, S.J. and Frese, P.W., 2017. Using landscape habitat associations to prioritize areas of conservation action for terrestrial birds. PloS one, 12(3).
