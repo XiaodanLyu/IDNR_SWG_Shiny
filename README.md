@@ -1,3 +1,5 @@
+[![DOI:10.1371/journal.pone.0173041](https://zenodo.org/badge/DOI/10.1371/journal.pone.0173041.svg)](https://doi.org/10.1371/journal.pone.0173041)
+
 ## Introduction
 
 This repository contains R Shiny code used to develop an interactive map of Iowa and to show predicted occupancy/colonization/detection probabilities for around 70 wild species including birds, mammals, reptiles, amphibians, odonates and butterflies. Most of them are birds.
